@@ -133,35 +133,113 @@
 
 // type aliases
 // reuseable shape, DRY!
-type Employee = {
-  readonly id: number; // freez/immutable a property of an object
-  name: string;
-  retire: (date: Date) => void;
+// type Employee = {
+//   readonly id: number; // freez/immutable a property of an object
+//   name: string;
+//   retire: (date: Date) => void;
+// };
+
+// let employee: Employee = {
+//   id: 1,
+//   name: "Mosh",
+//   retire: (date: Date) => {
+//     console.log(date);
+//   },
+// };
+
+// ===============================================================================
+
+// Union Types and Norrowing thechnique
+// use more thatn one type
+// function kgToLbs(weight: number | string): number {
+//   // weight.<ctrl_space_here> // compiler doesn't understand that it is number or string
+//   // we should use a technique here to find out > Norrowing
+//   if (typeof weight === "number") {
+//     // now the compiler knows that it is number, ctrl_space_here
+//     return weight * 2.2;
+//   } else {
+//     return parseInt(weight) * 2.2;
+//   }
+// }
+
+// // now we can call it in 2 separate ways.
+// kgToLbs(10);
+// kgToLbs("10kg");
+
+// ===============================================================================
+
+// Intersection Types
+// let weight: number & string; // having an object to have both types?
+
+type Draggable = {
+  drag: () => void;
 };
 
-let employee: Employee = {
-  id: 1,
-  name: "Mosh",
-  retire: (date: Date) => {
-    console.log(date);
-  },
+type Resizeable = {
+  resize: () => void;
+};
+
+type UIWidget = Draggable & Resizeable;
+
+let textBox: UIWidget = {
+  drag: () => {},
+  resize: () => {},
 };
 
 // ===============================================================================
 
-// Union Types
-// use more thatn one type
-function kgToLbs(weight: number | string): number {
-  // weight.<ctrl_space_here> // compiler doesn't understand that it is number or string
-  // we should use a technique here to find out > Norrowing
-  if (typeof weight === "number") {
-    // now the compiler knows that it is number, ctrl_space_here
-    return weight * 2.2;
-  } else {
-    return parseInt(weight) * 2.2;
-  }
+// Literal types (to have only limited values)
+
+// let quantity: number // can take any valid javasdcript number
+// let quantity: 50; // it should only be set to 50, nothing else.
+type Quantity = 50 | 100;
+let quantity: Quantity = 100;
+
+// ===============================================================================
+
+// Nullable types
+/**
+ * tsconfig > strictNullChecks change to false, now greet method lets you to pass null.
+ * if "strict" is set to true, all options that starts with strict will assume as true.
+ *
+ */
+// function greet(name: string) {
+//   console.log(name);
+// }
+// greet(null);
+
+// function greet(name: string | null | undefined) {
+//   if (name) console.log(name);
+//   else console.log("Hola");
+// }
+
+// // greet(null);
+// greet(undefined);
+
+// ===============================================================================
+
+// Optional Chaining
+
+type Customer = {
+  birthday?: Date;
+};
+
+function getCustomer(id: number): Customer | null | undefined {
+  return id === 0 ? null : { birthday: new Date() };
 }
 
-// now we can call it in 2 separate ways.
-kgToLbs(10);
-kgToLbs("10kg");
+let customer = getCustomer(0);
+// instead of this if, use ...
+// * Optional property access operator
+// if (customer! == null && customer !== undefined) {
+//   console.log(customer.birthday);
+// }
+console.log(customer?.birthday?.getFullYear()); // unless it is undefined
+
+// * Optional element access operator
+// customers?.[0] // if it has first element
+
+// * Optional call
+let logMsg: any = null;
+// logMsg("a"); // throws error
+logMsg?.("a"); // throws error
